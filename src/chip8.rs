@@ -43,17 +43,21 @@ pub struct Chip8 {
 }
 
 impl Chip8 {
-    pub fn new() -> Self {
-        Self {
-            display: Display::new(),
+    pub fn new() -> Result<Self, Box<dyn Error>> {
+        let display = Display::new()?;
+
+        let chip8 = Self {
+            display,
             keyboard: Keyboard::new(),
             ram: Ram::new(),
             stack: LinkedList::new(),
             registers: Registers::new(),
-        }
+        };
+
+        Ok(chip8)
     }
 
-    pub fn load_rom(&mut self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn load_rom(&mut self, path: &str) -> Result<(), Box<dyn Error>> {
         let file = File::open(path)?;
 
         let mut buf = Vec::new();
@@ -64,7 +68,7 @@ impl Chip8 {
         Ok(())
     }
 
-    pub fn run(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
         let mut num_of_instruction = 0;
         let mut end_time = time::Instant::now() + time::Duration::from_secs(1);
         loop {
@@ -95,9 +99,16 @@ impl Chip8 {
 
     fn execute(&mut self, instruction: Instructions, opcode: u16) -> Result<(), Chip8Error> {
         match instruction {
-            Instructions::SYS => unimplemented!(),
-            Instructions::CLS => unimplemented!(),
-            Instructions::RET => unimplemented!(),
+            Instructions::SYS => {
+                unimplemented!()
+            }
+            Instructions::CLS => {
+                self.display.clear();
+                Ok(())
+            }
+            Instructions::RET => {
+                unimplemented!()
+            }
             _ => Err(Chip8Error::FailedToExecuteInstruction),
         }
     }

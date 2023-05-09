@@ -15,11 +15,17 @@ use chip8::Chip8;
 fn main() {
     let args = std::env::args().skip(1).collect::<Vec<String>>();
     if args.len() == 1 {
-        let mut chip8 = Chip8::new();
-        if let Err(err) = chip8.load_rom(&args[0]) {
-            eprintln!("CHIP8 load rom: {err}");
-        } else if let Err(err) = chip8.run() {
-            eprintln!("CHIP8 run: {err}");
+        match Chip8::new() {
+            Ok(mut chip8) => {
+                if let Err(err) = chip8.load_rom(&args[0]) {
+                    eprintln!("CHIP8 load rom: {err}");
+                } else if let Err(err) = chip8.run() {
+                    eprintln!("CHIP8 run: {err}");
+                }
+            }
+            Err(err) => {
+                eprintln!("CHIP8: new: {err}");
+            }
         }
     } else {
         eprintln!("CHIP8: Invalid arguments!")

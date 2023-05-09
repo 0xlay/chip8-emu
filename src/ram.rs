@@ -8,7 +8,7 @@ const RAM_SIZE: usize = 4_096;
 
 ///
 /// The RESERVED_SIZE constant is the size of the reserved memory in the RAM for sprites.
-/// 
+///
 const RESERVED_SIZE: usize = 80;
 
 ///
