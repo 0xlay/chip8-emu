@@ -1,0 +1,18 @@
+cognitive-complexity-threshold = 20
+
+too-many-arguments-threshold = 7
+
+type-complexity-threshold = 500
+
+doc-valid-idents = [
+    "KiB", "MiB", "GiB", "TiB", "PiB", "EiB","DirectX", "ECMAScript", 
+    "GPLv2", "GPLv3", "GitHub", "GitLab", "IPv4", "IPv6", "ClojureScript",
+    "CoffeeScript", "JavaScript", "PureScript", "TypeScript", "NaN", "NaNs",
+    "OAuth", "GraphQL", "OCaml", "OpenGL", "OpenMP", "OpenSSH", "OpenSSL",
+    "OpenStreetMap", "TensorFlow", "TrueType", "iOS", "macOS", "TeX", "LaTeX",
+    "BibTeX", "BibLaTeX", "MinGW", "CamelCase",
+]
+
+disallowed-names = [
+    "foo", "boo", "baz", "quux", "toto", "tata", "titi", "bar", "unreadable_literal",
+]
