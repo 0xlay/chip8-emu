@@ -1,7 +1,18 @@
 [package]
 name = "chip8-emu"
 version = "0.1.0"
+authors = ["0xlay <0xlay.lab@gmail.com>"]
 edition = "2021"
+description = "chip8-emu"
+repository = "https://github.com/0xlay/chip8-emu"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+keywords = ["chip8-emu", "emulator"]
+categories = ["emulators"]
+
 
 [dependencies]
-sdl2 = "0.35.2"
+sdl2 = "0.36.0"
+clap = "4.5.0"
+clap_derive = "4.5.0"
+rand = "0.8.5"
