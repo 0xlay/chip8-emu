@@ -2,22 +2,47 @@ use std::error::Error;
 use std::fmt::{Display, Formatter};
 
 ///
-/// The RAM_SIZE constant is the size of the RAM in bytes for the CHIP-8.
+/// The `RAM_SIZE` constant is the size of the RAM in bytes for the CHIP-8.
 ///
 const RAM_SIZE: usize = 4_096;
 
 ///
-/// The RESERVED_SIZE constant is the size of the reserved memory in the RAM for sprites.
+/// The `RESERVED_SIZE` constant is the size of the reserved memory in the RAM for sprites.
 ///
 const RESERVED_SIZE: usize = 80;
 
 ///
-/// The DEFAULT_PROGRAM_START_OFFSET constant is the default offset for the start of the program in the RAM.
+/// The `DEFAULT_PROGRAM_START_OFFSET` constant is the default offset for the start of the program in the RAM.
 ///
-const DEFAULT_PROGRAM_START_OFFSET: usize = 0x200usize;
+const DEFAULT_PROGRAM_START_OFFSET: usize = 0x200;
 
 ///
-/// The RamError enum represents the possible errors that can occur when loading a program into the RAM.
+/// The `Registers` struct represents the registers of the CHIP-8.
+///
+pub struct Registers {
+    pub pc: u16,      // current instruction in memory
+    pub sp: Vec<u16>, // stack pointer
+    pub i: u16,       // index register
+    pub st: u8,       // sound timer
+    pub dt: u8,       // delay timer
+    pub v: [u8; 16],  // general registers
+}
+
+impl Registers {
+    pub const fn new() -> Self {
+        Self {
+            pc: DEFAULT_PROGRAM_START_OFFSET as u16,
+            sp: Vec::new(),
+            i: 0,
+            st: 0,
+            dt: 0,
+            v: [0; 16],
+        }
+    }
+}
+
+///
+/// The `RamError` enum represents the possible errors that can occur when loading a program into the RAM.
 ///
 #[derive(Debug)]
 pub enum RamError {
@@ -30,14 +55,14 @@ impl Error for RamError {}
 impl Display for RamError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match *self {
-            RamError::NotEnoughSpace => write!(f, "Not enough space to load program!"),
-            RamError::OutOfBound => write!(f, "Out of bound memory!"),
+            Self::NotEnoughSpace => write!(f, "Not enough space to load program!"),
+            Self::OutOfBound => write!(f, "Out of bound memory!"),
         }
     }
 }
 
 ///
-/// The Ram struct represents the RAM of the CHIP-8.
+/// The `Ram` struct represents the RAM of the CHIP-8.
 ///
 pub struct Ram {
     data: [u8; RAM_SIZE],
@@ -88,7 +113,7 @@ impl Ram {
     }
 
     #[allow(dead_code)]
-    pub fn read_byte(&self, address: usize) -> Result<u8, RamError> {
+    pub const fn read_byte(&self, address: usize) -> Result<u8, RamError> {
         if address < RAM_SIZE {
             Ok(self.data[address])
         } else {
@@ -108,8 +133,8 @@ impl Ram {
 
     #[allow(dead_code)]
     pub fn read_word(&self, address: usize) -> Result<u16, RamError> {
-        if address < RAM_SIZE - 1 {
-            Ok((self.data[address] as u16) << 8 | self.data[address + 1] as u16)
+        if address < RAM_SIZE {
+            Ok(u16::from(self.data[address]) << 8 | u16::from(self.data[address + 1]))
         } else {
             Err(RamError::OutOfBound)
         }
@@ -117,7 +142,7 @@ impl Ram {
 
     #[allow(dead_code)]
     pub fn write_word(&mut self, address: usize, value: u16) -> Result<(), RamError> {
-        if address < RAM_SIZE - 1 {
+        if address < RAM_SIZE {
             self.data[address] = (value >> 8) as u8;
             self.data[address + 1] = value as u8;
             Ok(())

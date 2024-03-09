@@ -1,33 +1,29 @@
-mod chip8;
-mod display;
-mod instructions;
-mod keyboard;
-mod ram;
-mod registers;
+#![warn(clippy::all)]
+#![warn(clippy::pedantic)]
+#![warn(clippy::nursery)]
+#![warn(clippy::cargo)]
+// #![warn(clippy::restriction)]
 
-use chip8::Chip8;
+mod emu;
+mod utl;
 
-// http://devernay.free.fr/hacks/chip8/C8TECH10.HTM
-// TODO: complete the implementation of the Chip8 emulator.
-// TODO: Отрисовать окно или с помощью вулкан или opengl
-// https://tobiasvl.github.io/blog/write-a-chip-8-emulator/
+use clap::Parser;
+
+use emu::chip8::Chip8;
+use utl::config::Args;
 
 fn main() {
-    let args = std::env::args().skip(1).collect::<Vec<String>>();
-    if args.len() == 1 {
-        match Chip8::new() {
-            Ok(mut chip8) => {
-                if let Err(err) = chip8.load_rom(&args[0]) {
-                    eprintln!("CHIP8 load rom: {err}");
-                } else if let Err(err) = chip8.run() {
-                    eprintln!("CHIP8 run: {err}");
-                }
-            }
-            Err(err) => {
-                eprintln!("CHIP8: new: {err}");
+    let args = Args::parse();
+    match Chip8::new(args.width, args.height) {
+        Ok(mut chip8) => {
+            if let Err(err) = chip8.load_rom(args.rom_path.as_str()) {
+                eprintln!("[-] Failed to load the ROM. Error => `{err}`");
+            } else if let Err(err) = chip8.run() {
+                eprintln!("[-] Failed to run the app. Error => `{err}`");
             }
         }
-    } else {
-        eprintln!("CHIP8: Invalid arguments!")
+        Err(err) => {
+            eprintln!("[-] Failed to run the CHIP8 emulator. Error => `{err}`");
+        }
     }
 }
